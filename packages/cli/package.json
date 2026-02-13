@@ -1,7 +1,7 @@
 {
   "name": "@usermind/cli",
   "version": "0.0.1",
-  "description": "CLI for Usermind flow engine",
+  "description": "Utility CLI for Usermind flow validation and evidence inspection",
   "type": "module",
   "bin": {
     "usermind": "dist/index.js"
