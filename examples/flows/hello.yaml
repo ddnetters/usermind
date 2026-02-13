@@ -1,6 +1,12 @@
 name: hello
 description: A minimal example flow that navigates to a page and checks the title.
 
+actor:
+  role: visitor
+
+constraints:
+  - do not navigate away from example.com
+
 steps:
   - action: navigate
     url: "https://example.com"
