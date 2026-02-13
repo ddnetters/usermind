@@ -1,7 +1,7 @@
 {
   "name": "@usermind/core",
   "version": "0.0.1",
-  "description": "Flow engine, runner, and evidence capture for Usermind",
+  "description": "Flow DSL, guidance engine, and evidence capture for Usermind",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,9 +23,10 @@
   },
   "keywords": [
     "usermind",
-    "flow-engine",
-    "agent",
-    "testing"
+    "flow-dsl",
+    "mcp",
+    "evidence",
+    "agent-guidance"
   ],
   "license": "MIT",
   "devDependencies": {
