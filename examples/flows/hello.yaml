@@ -1,0 +1,10 @@
+name: hello
+description: A minimal example flow that navigates to a page and checks the title.
+
+steps:
+  - action: navigate
+    url: "https://example.com"
+
+  - action: assert
+    selector: "h1"
+    text: "Example Domain"
