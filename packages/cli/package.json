@@ -1,0 +1,31 @@
+{
+  "name": "@usermind/cli",
+  "version": "0.0.1",
+  "description": "CLI for Usermind flow engine",
+  "type": "module",
+  "bin": {
+    "usermind": "dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@usermind/core": "workspace:*"
+  },
+  "keywords": [
+    "usermind",
+    "cli"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
