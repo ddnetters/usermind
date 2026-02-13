@@ -30,6 +30,19 @@ importers:
         specifier: ^4.0.18
         version: 4.0.18
 
+  packages/mcp-server:
+    dependencies:
+      '@usermind/core':
+        specifier: workspace:*
+        version: link:../core
+    devDependencies:
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18
+
 packages:
 
   '@esbuild/aix-ppc64@0.27.3':
