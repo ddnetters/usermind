@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://usermind.dev/schemas/evidence-bundle.schema.json",
+  "title": "EvidenceBundle",
+  "description": "Complete execution trace for a single Usermind flow run.",
+  "type": "object",
+  "required": [
+    "flowName",
+    "sessionId",
+    "actor",
+    "startedAt",
+    "finishedAt",
+    "status",
+    "steps",
+    "errors"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "flowName": {
+      "type": "string",
+      "description": "Name of the flow that was executed."
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Unique identifier for this execution session."
+    },
+    "actor": { "$ref": "#/$defs/Actor" },
+    "startedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of when execution started."
+    },
+    "finishedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO-8601 timestamp of when execution finished, or null while still running."
+    },
+    "status": { "$ref": "#/$defs/BundleStatus" },
+    "steps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/EvidenceStepResult" },
+      "description": "Ordered list of step-level evidence."
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/EvidenceError" },
+      "description": "Errors encountered during execution."
+    }
+  },
+  "$defs": {
+    "Actor": {
+      "type": "object",
+      "description": "Role-aware identity that the agent assumes during flow execution.",
+      "required": ["role"],
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "type": "string",
+          "description": "The role the agent assumes (e.g. \"admin\", \"user\", \"visitor\")."
+        },
+        "permissions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Permissions associated with this role."
+        },
+        "session": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Key-value session data interpolated at runtime."
+        }
+      }
+    },
+    "BundleStatus": {
+      "type": "string",
+      "enum": ["passed", "failed", "error", "running"],
+      "description": "Overall outcome of a flow execution."
+    },
+    "ActionType": {
+      "type": "string",
+      "enum": ["navigate", "click", "fill", "assert", "select", "hover", "wait"],
+      "description": "Union of all built-in action type identifiers."
+    },
+    "StepResultStatus": {
+      "type": "string",
+      "enum": ["passed", "failed", "error", "skipped"],
+      "description": "Outcome of an individual step execution."
+    },
+    "EvidenceStepResult": {
+      "type": "object",
+      "description": "Evidence record for a single step within a flow run.",
+      "required": [
+        "stepIndex",
+        "action",
+        "target",
+        "result",
+        "timestamp",
+        "screenshot"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "stepIndex": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based position of this step in the flow's steps array."
+        },
+        "action": { "$ref": "#/$defs/ActionType" },
+        "target": {
+          "type": "string",
+          "description": "Target of the action: URL, selector, or duration-as-string."
+        },
+        "result": { "$ref": "#/$defs/StepResultStatus" },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of when the step completed."
+        },
+        "screenshot": {
+          "type": ["string", "null"],
+          "description": "Screenshot path, data URI, or null if not captured."
+        },
+        "durationMs": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Wall-clock duration in milliseconds."
+        }
+      }
+    },
+    "EvidenceError": {
+      "type": "object",
+      "description": "A single error captured during flow execution.",
+      "required": ["code", "message", "stepIndex", "timestamp"],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error classification code (e.g. \"TimeoutError\")."
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message."
+        },
+        "stepIndex": {
+          "type": ["integer", "null"],
+          "description": "Zero-based index of the step that caused the error, or null for flow-level errors."
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO-8601 timestamp of when the error occurred."
+        },
+        "details": {
+          "type": "string",
+          "description": "Optional additional context (stack trace, DOM snapshot, etc.)."
+        }
+      }
+    }
+  }
+}

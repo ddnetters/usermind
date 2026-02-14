@@ -9,13 +9,15 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./schemas/evidence-bundle.schema.json": "./schemas/evidence-bundle.schema.json"
   },
   "files": [
-    "dist"
+    "dist",
+    "schemas"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "pnpm clean && tsc",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
