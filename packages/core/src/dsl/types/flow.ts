@@ -1,13 +1,13 @@
 import type { Actor } from "./actor.js";
-import type { Constraint } from "./constraint.js";
+import type { Constraint, ConstraintInput } from "./constraint.js";
 import type { Fragment } from "./fragment.js";
 import type { Step } from "./step.js";
 
 /**
- * A complete user journey definition.
+ * A parsed, normalized flow definition.
  *
- * Flows describe the sequence of actions an agent should perform,
- * the role it assumes, and the constraints it must respect.
+ * All constraints have been expanded from shorthand strings into
+ * full Constraint objects. This is the shape the guidance engine works with.
  */
 export interface Flow {
   /** Unique identifier for this flow. */
@@ -16,10 +16,26 @@ export interface Flow {
   description?: string;
   /** The role-aware identity the agent assumes. */
   actor: Actor;
-  /** Guardrails that restrict agent behavior. */
+  /** Guardrails that restrict agent behavior (normalized to objects). */
   constraints: Constraint[];
   /** Ordered sequence of actions the agent should perform. */
   steps: Step[];
   /** Reusable step groups that can be composed into this flow. */
+  fragments?: Fragment[];
+}
+
+/**
+ * Raw flow shape as it appears in YAML before parsing.
+ *
+ * Constraints may be bare strings or full objects. The parser
+ * normalizes RawFlow into Flow.
+ */
+export interface RawFlow {
+  name: string;
+  description?: string;
+  actor: Actor;
+  /** Constraints as written in YAML — strings or objects. */
+  constraints: ConstraintInput[];
+  steps: Step[];
   fragments?: Fragment[];
 }

@@ -1,8 +1,11 @@
 import { describe, it, expect, expectTypeOf } from "vitest";
 import type {
   Flow,
+  RawFlow,
   Actor,
   Constraint,
+  ConstraintInput,
+  ConstraintScope,
   Fragment,
   Step,
   ActionType,
@@ -72,7 +75,7 @@ describe("DSL type definitions", () => {
     expect(step.condition).toBe("page_loaded");
   });
 
-  it("represents a complete flow matching hello.yaml", () => {
+  it("represents a parsed flow (normalized from hello.yaml)", () => {
     const flow: Flow = {
       name: "hello",
       description: "A minimal example flow that navigates to a page and checks the title.",
@@ -88,6 +91,52 @@ describe("DSL type definitions", () => {
     expect(flow.actor.role).toBe("visitor");
     expect(flow.constraints).toHaveLength(1);
     expect(flow.steps).toHaveLength(2);
+  });
+
+  it("represents raw YAML input with string constraints (hello.yaml)", () => {
+    const raw: RawFlow = {
+      name: "hello",
+      description: "A minimal example flow that navigates to a page and checks the title.",
+      actor: { role: "visitor" },
+      constraints: ["do not navigate away from example.com"],
+      steps: [
+        { action: "navigate", url: "https://example.com" },
+        { action: "assert", selector: "h1", text: "Example Domain" },
+      ],
+    };
+
+    expect(raw.constraints[0]).toBe("do not navigate away from example.com");
+  });
+
+  it("supports constraint scope", () => {
+    const flowConstraint: Constraint = {
+      rule: "do not navigate away from example.com",
+      scope: "flow",
+    };
+    const stepConstraint: Constraint = {
+      rule: "do not clear the input before filling",
+      scope: "step",
+    };
+
+    expect(flowConstraint.scope).toBe("flow");
+    expect(stepConstraint.scope).toBe("step");
+    expectTypeOf<ConstraintScope>().toEqualTypeOf<"flow" | "step">();
+  });
+
+  it("accepts mixed string and object constraints in RawFlow", () => {
+    const raw: RawFlow = {
+      name: "mixed",
+      actor: { role: "user" },
+      constraints: [
+        "do not leave the app",
+        { rule: "do not delete messages", scope: "flow" },
+      ],
+      steps: [{ action: "navigate", url: "https://example.com" }],
+    };
+
+    expect(raw.constraints).toHaveLength(2);
+    expect(typeof raw.constraints[0]).toBe("string");
+    expect(typeof raw.constraints[1]).toBe("object");
   });
 
   it("supports fragments on a flow", () => {
