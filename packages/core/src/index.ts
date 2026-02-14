@@ -18,3 +18,5 @@ export type {
   HoverStep,
   WaitStep,
 } from "./dsl/index.js";
+
+export { parseFlow, ParseError, ACTION_TYPES, REQUIRED_FIELDS } from "./dsl/index.js";
