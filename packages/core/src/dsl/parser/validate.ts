@@ -71,16 +71,18 @@ function validateConstraint(c: unknown, index: number): void {
   }
 }
 
-function validateStep(step: unknown, index: number): void {
+function validateStep(step: unknown, index: number, pathPrefix = "steps"): void {
+  const basePath = `${pathPrefix}[${index}]`;
+
   if (!isRecord(step)) {
-    fail(`Step at index ${index} must be an object`, `steps[${index}]`);
+    fail(`Step at index ${index} must be an object`, basePath);
   }
 
   const action = step["action"];
   if (typeof action !== "string" || !ACTION_TYPES.has(action as ActionType)) {
     fail(
       `Step at index ${index} has unknown action '${String(action)}'; expected one of: ${[...ACTION_TYPES].join(", ")}`,
-      `steps[${index}].action`,
+      `${basePath}.action`,
     );
   }
 
@@ -90,14 +92,21 @@ function validateStep(step: unknown, index: number): void {
     if (value === undefined || value === null) {
       fail(
         `Step ${index} (action: '${action}') is missing required field '${field}'`,
-        `steps[${index}].${field}`,
+        `${basePath}.${field}`,
       );
     }
     if (field === "duration") {
       if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) {
         fail(
           `Step ${index} (action: '${action}') field 'duration' must be a positive number`,
-          `steps[${index}].duration`,
+          `${basePath}.duration`,
+        );
+      }
+    } else {
+      if (typeof value !== "string" || value === "") {
+        fail(
+          `Step ${index} (action: '${action}') field '${field}' must be a non-empty string`,
+          `${basePath}.${field}`,
         );
       }
     }
@@ -121,7 +130,7 @@ function validateFragment(frag: unknown, index: number): void {
     );
   }
   for (let i = 0; i < frag["steps"].length; i++) {
-    validateStep(frag["steps"][i], i);
+    validateStep(frag["steps"][i], i, `fragments[${index}].steps`);
   }
 }
 

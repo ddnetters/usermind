@@ -484,6 +484,49 @@ steps:
     expect(() => parseFlow(yaml)).toThrow("duration");
   });
 
+  it("rejects navigate step with non-string url", () => {
+    const yaml = `
+name: test
+actor:
+  role: user
+constraints: []
+steps:
+  - action: navigate
+    url: 42
+`;
+    expect(() => parseFlow(yaml)).toThrow(ParseError);
+    expect(() => parseFlow(yaml)).toThrow("'url' must be a non-empty string");
+  });
+
+  it("rejects click step with non-string selector", () => {
+    const yaml = `
+name: test
+actor:
+  role: user
+constraints: []
+steps:
+  - action: click
+    selector: 123
+`;
+    expect(() => parseFlow(yaml)).toThrow(ParseError);
+    expect(() => parseFlow(yaml)).toThrow("'selector' must be a non-empty string");
+  });
+
+  it("rejects fill step with empty string value", () => {
+    const yaml = `
+name: test
+actor:
+  role: user
+constraints: []
+steps:
+  - action: fill
+    selector: "#input"
+    value: ""
+`;
+    expect(() => parseFlow(yaml)).toThrow(ParseError);
+    expect(() => parseFlow(yaml)).toThrow("'value' must be a non-empty string");
+  });
+
   it("rejects non-object step", () => {
     const yaml = `
 name: test
@@ -627,6 +670,29 @@ fragments:
 `;
     expect(() => parseFlow(yaml)).toThrow(ParseError);
     expect(() => parseFlow(yaml)).toThrow("unknown action");
+  });
+
+  it("reports fragment-scoped paths for invalid steps inside fragments", () => {
+    const yaml = `
+name: test
+actor:
+  role: user
+constraints: []
+steps:
+  - action: navigate
+    url: https://example.com
+fragments:
+  - name: broken
+    steps:
+      - action: click
+`;
+    try {
+      parseFlow(yaml);
+      expect.fail("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(ParseError);
+      expect((err as ParseError).path).toBe("fragments[0].steps[0].selector");
+    }
   });
 
   it("rejects non-array fragments", () => {
