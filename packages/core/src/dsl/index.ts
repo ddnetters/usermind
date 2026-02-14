@@ -13,3 +13,5 @@ export type {
   HoverStep,
   WaitStep,
 } from "./types/step.js";
+
+export { parseFlow, ParseError, ACTION_TYPES, REQUIRED_FIELDS } from "./parser/index.js";
