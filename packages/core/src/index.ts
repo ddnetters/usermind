@@ -20,3 +20,11 @@ export type {
 } from "./dsl/index.js";
 
 export { parseFlow, ParseError, ACTION_TYPES, REQUIRED_FIELDS } from "./dsl/index.js";
+
+export type {
+  EvidenceBundle,
+  BundleStatus,
+  EvidenceStepResult,
+  StepResultStatus,
+  EvidenceError,
+} from "./evidence/index.js";
